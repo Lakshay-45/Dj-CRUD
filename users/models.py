@@ -9,5 +9,6 @@ class User(models.Model):
     last_name = models.CharField(max_length=256)
     date_joined = models.DateTimeField(auto_now_add=True)
 
+    # Returns a readable name in the admin view
     def __str__(self):
         return self.username
