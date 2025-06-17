@@ -96,15 +96,40 @@ You can use a web browser or an API client like Postman to perform the following
 
 ## Running the gRPC Request Script
 
-This project includes a management command to make a sample gRPC request to a public service.
+This project includes a management command to make a gRPC request to a **locally hosted** gRPC server, demonstrating a full client-server interaction.
 
 ### Purpose
 
-The script demonstrates the ability to integrate a gRPC client within a Django application.
+The `grpc_server.py` script runs a simple gRPC Greeter service. The Django management command `make_grpc_request` acts as the client, sending a request to the local server and printing its response.
 
 ### How to Run
 
-Ensure your virtual environment is active, then run the following command from the project root:
+This process requires two separate terminals running in the project's root directory.
+
+**1. Install the Local gRPC Package**
+
+Before you can run the server or client, you must install the `grpc_requests` directory as an editable Python package. This makes the generated gRPC code available to the rest of the project.
+
+Make sure your virtual environment is active, then run:
+
+```bash
+pip install -e grpc_requests/
+```
+
+**2. Start the gRPC Server (Terminal 1)**
+
+In your first terminal, start the gRPC server script. It will run and wait for incoming connections.
+
+```bash
+python grpc_server.py
+```
+You should see the message: `INFO:root:gRPC server started on port 50051...`
+
+Leave this terminal running.
+
+**3. Run the gRPC Client (Terminal 2)**
+
+In a second terminal (with your virtual environment active), run the Django management command to send a request to the server you just started.
 
 ```bash
 python manage.py make_grpc_request
@@ -112,12 +137,20 @@ python manage.py make_grpc_request
 
 ### Sample Output
 
-You should see an output similar to this, confirming a successful connection and response:
+If the server is running correctly, you will see the following output in **Terminal 2**:
 
 ```
-Attempting to make a gRPC request...
-Sending request to server with text: 'Hello, gRCP'
+Attempting to make a gRPC request to the local server...
+Sending request to localhost:50051 with name: 'Django'
 gRPC Response Received Successfully!
-Server echoed back: 'Hello, gRCP'
-grpc request process finished.
+Server responded: 'Hello, Django'
+gRPC request process finished
 ```
+
+Simultaneously, you will see a new log message appear in **Terminal 1**, confirming it received the request:
+
+```
+INFO:root:Received request for name: Django
+```
+
+This confirms the entire gRPC client-server flow is working correctly.

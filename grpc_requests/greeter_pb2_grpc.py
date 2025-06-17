@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import echo_pb2 as echo__pb2
+import greeter_pb2 as greeter__pb2
 
 GRPC_GENERATED_VERSION = '1.73.0'
 GRPC_VERSION = grpc.__version__
@@ -18,14 +18,14 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in echo_pb2_grpc.py depends on'
+        + f' but the generated code in greeter_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
     )
 
 
-class EchoStub(object):
+class GreeterStub(object):
     """Service definition
     """
 
@@ -35,45 +35,45 @@ class EchoStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.Unary = channel.unary_unary(
-                '/postman.echo.Echo/Unary',
-                request_serializer=echo__pb2.Request.SerializeToString,
-                response_deserializer=echo__pb2.Response.FromString,
+        self.SayHello = channel.unary_unary(
+                '/greeter.Greeter/SayHello',
+                request_serializer=greeter__pb2.HelloRequest.SerializeToString,
+                response_deserializer=greeter__pb2.HelloReply.FromString,
                 _registered_method=True)
 
 
-class EchoServicer(object):
+class GreeterServicer(object):
     """Service definition
     """
 
-    def Unary(self, request, context):
+    def SayHello(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
 
-def add_EchoServicer_to_server(servicer, server):
+def add_GreeterServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'Unary': grpc.unary_unary_rpc_method_handler(
-                    servicer.Unary,
-                    request_deserializer=echo__pb2.Request.FromString,
-                    response_serializer=echo__pb2.Response.SerializeToString,
+            'SayHello': grpc.unary_unary_rpc_method_handler(
+                    servicer.SayHello,
+                    request_deserializer=greeter__pb2.HelloRequest.FromString,
+                    response_serializer=greeter__pb2.HelloReply.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'postman.echo.Echo', rpc_method_handlers)
+            'greeter.Greeter', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('postman.echo.Echo', rpc_method_handlers)
+    server.add_registered_method_handlers('greeter.Greeter', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class Echo(object):
+class Greeter(object):
     """Service definition
     """
 
     @staticmethod
-    def Unary(request,
+    def SayHello(request,
             target,
             options=(),
             channel_credentials=None,
@@ -86,9 +86,9 @@ class Echo(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/postman.echo.Echo/Unary',
-            echo__pb2.Request.SerializeToString,
-            echo__pb2.Response.FromString,
+            '/greeter.Greeter/SayHello',
+            greeter__pb2.HelloRequest.SerializeToString,
+            greeter__pb2.HelloReply.FromString,
             options,
             channel_credentials,
             insecure,
